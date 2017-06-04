@@ -1,18 +1,22 @@
 const path = require('path');
 const fs = require('fs');
 
+/**
+ * '/foo/bar/qux'.split('/') ==> ['', 'foo', 'bar', 'qux']
+ */
 function find(where, which) {
-  where = where.split(path.sep);
   if (where.length === 0) {
-    throw new Error(`${which} not find in ${where}`);
+    throw new Error(`${which} not found in path`);
   }
-  where.pop();
 
-  const dir = where.join(path.sep);
   try {
-    fs.statSync(path.resolve(dir, which));
-    return dir;
+    fs.statSync(path.join(where, which));
+    return where;
   } catch (e) {}
+
+  where = where.split(path.sep);
+  where.pop();
+  const dir = where.join(path.sep);
 
   return find(dir, which);
 }
